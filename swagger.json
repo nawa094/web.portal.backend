@@ -1,0 +1,418 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Stock Movement API",
+    "description": "API for providing information about stock movements including product details and suggested orders.",
+    "version": "1.0.0"
+  },
+  "servers": [],
+  "paths": {
+    "/users": {
+      "get": {
+        "summary": "Get all users",
+        "description": "Retrieve a list of all users.",
+        "responses": {
+          "200": {
+            "description": "A list of users.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stock/movements": {
+      "post": {
+        "summary": "Get stock movements by branch, customer, and label type",
+        "description": "Retrieve stock movement information based on branch, customer, and label type.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "branch": {
+                    "type": "string",
+                    "description": "The branch code or name."
+                  },
+                  "customer": {
+                    "type": "string",
+                    "description": "The customer code or name."
+                  },
+                  "label_type": {
+                    "type": "string",
+                    "description": "The type of label (e.g., fast moving, slow moving)."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stock movement information retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "report_name": {
+                      "type": "string",
+                      "description": "The name of the report."
+                    },
+                    "last_updated": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "The date and time when the report was last updated."
+                    },
+                    "movements": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/StockMovement"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stock/orders/confirm": {
+      "post": {
+        "summary": "Confirm stock orders",
+        "description": "Confirm the stock to be ordered based on provided stock movement details.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/StockMovement"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stock orders confirmed successfully."
+          },
+          "400": {
+            "description": "Invalid request body or data."
+          }
+        }
+      }
+    },
+    "/branches": {
+      "get": {
+        "summary": "Get all branches",
+        "description": "Retrieve a list of all branches.",
+        "responses": {
+          "200": {
+            "description": "A list of branches.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Branch"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Search for branches",
+        "description": "Search for branches by name or code.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "search_query": {
+                    "type": "string",
+                    "description": "The search query to find branches."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of branches found successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Branch"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers": {
+      "get": {
+        "summary": "Get all customers",
+        "description": "Retrieve a list of all customers.",
+        "responses": {
+          "200": {
+            "description": "A list of customers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Customer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Search for customers",
+        "description": "Search for customers by name or code.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "search_query": {
+                    "type": "string",
+                    "description": "The search query to find customers."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of customers found successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Customer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/label-types": {
+      "get": {
+        "summary": "Get all label types",
+        "description": "Retrieve a list of all label types.",
+        "responses": {
+          "200": {
+            "description": "A list of label types.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LabelType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Search for label types",
+        "description": "Search for label types by name or code.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "search_query": {
+                    "type": "string",
+                    "description": "The search query to find label types."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of label types found successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LabelType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "StockMovement": {
+        "type": "object",
+        "properties": {
+          "product_code": {
+            "type": "string",
+            "description": "The code of the product."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the product."
+          },
+          "stock": {
+            "type": "object",
+            "description": "Stock information.",
+            "properties": {
+              "head_office": {
+                "type": "integer",
+                "description": "Stock at head office."
+              },
+              "in_transit": {
+                "type": "integer",
+                "description": "Stock in transit."
+              },
+              "at_branch": {
+                "type": "integer",
+                "description": "Stock at branch."
+              },
+              "total": {
+                "type": "integer",
+                "description": "Total stock."
+              },
+              "suggested_stock": {
+                "type": "integer",
+                "description": "Suggested stock quantity."
+              }
+            }
+          },
+          "percentage_growth": {
+            "type": "number",
+            "format": "float",
+            "description": "Percentage growth of stock."
+          },
+          "suggested_order_quantity": {
+            "type": "integer",
+            "description": "Suggested order quantity."
+          },
+          "factory_quantity": {
+            "type": "integer",
+            "description": "Quantity at factory."
+          },
+          "estimated_sales_volume": {
+            "type": "integer",
+            "description": "Estimated sales volume."
+          },
+          "order_quantity": {
+            "type": "integer",
+            "description": "Order quantity."
+          },
+          "fast_moving_label_indicator": {
+            "type": "boolean",
+            "description": "Indicator for fast-moving label."
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "The username of the user."
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the user."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the user."
+          },
+          "surname": {
+            "type": "string",
+            "description": "The surname of the user."
+          },
+          "password_hash": {
+            "type": "string",
+            "description": "The hash of the user's password."
+          }
+        }
+      },
+      "Branch": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for the branch."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the branch."
+          }
+        }
+      },
+      "Customer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for the customer."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the customer."
+          }
+        }
+      },
+      "LabelType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for the label type."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the label type."
+          }
+        }
+      }
+    }
+  }
+}
